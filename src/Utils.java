@@ -174,4 +174,30 @@ public class Utils {
         }
         return bytes;
     }
+
+    public static String convertByteToBinary(byte b){
+        String binary = "";
+        while(b!=0){
+            if(b%2==0)
+                binary = binary + "0";
+            else
+                binary = binary + "1";
+            b= (byte) (b/(byte)2);
+        }
+
+        //reversing the string
+        String tempBinary = "";
+        for(int i = binary.length()-1;i>=0;i--){
+            tempBinary = tempBinary + binary.charAt(i);
+        }
+        binary = tempBinary;
+
+        if(binary.length()!=8){
+            int rem = 8 - binary.length();
+            for(int i = 0;i<rem;i++){
+                binary = "0"+binary;
+            }
+        }
+        return binary;
+    }
 }
