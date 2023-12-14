@@ -1,3 +1,9 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class Utils {
 
     //Mapping as per RFC 4648
@@ -175,29 +181,51 @@ public class Utils {
         return bytes;
     }
 
-    public static String convertByteToBinary(byte b){
+    public static String convertByteToBinary(byte b) {
         String binary = "";
-        while(b!=0){
-            if(b%2==0)
+        while (b != 0) {
+            if (b % 2 == 0)
                 binary = binary + "0";
             else
                 binary = binary + "1";
-            b= (byte) (b/(byte)2);
+            b = (byte) (b / (byte) 2);
         }
 
         //reversing the string
         String tempBinary = "";
-        for(int i = binary.length()-1;i>=0;i--){
+        for (int i = binary.length() - 1; i >= 0; i--) {
             tempBinary = tempBinary + binary.charAt(i);
         }
         binary = tempBinary;
 
-        if(binary.length()!=8){
+        if (binary.length() != 8) {
             int rem = 8 - binary.length();
-            for(int i = 0;i<rem;i++){
-                binary = "0"+binary;
+            for (int i = 0; i < rem; i++) {
+                binary = "0" + binary;
             }
         }
         return binary;
+
+    }
+
+    public static String getProblemStatement(String problemURL) throws IOException {
+        URL url = new URL(problemURL);
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        urlConnection.setRequestMethod("GET");
+        int statusCode = urlConnection.getResponseCode();
+        if (statusCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String line = bufferedReader.readLine();
+            StringBuffer buffer = new StringBuffer();
+            while (line != null) {
+                buffer.append(line);
+                line = bufferedReader.readLine();
+            }
+
+            //Storing the response
+            String response = buffer.toString();
+            return response;
+        }
+        return "Bad Request. Status:" + statusCode;
     }
 }
